@@ -39,6 +39,91 @@ A comprehensive AI agent that combines **LangChain** and **LangGraph** to create
 - **Registry system** for dynamic processor management
 - **Configuration-driven** setup and customization
 
+## 🏗️ System Architecture
+
+The multimodal AI agent follows a modular, extensible architecture that promotes scalability and maintainability:
+
+```mermaid
+graph TB
+    subgraph "🤖 Multimodal AI Agent Architecture"
+        subgraph "🔧 Core System"
+            MA[MultimodalAgent]
+            PR[ProcessorRegistry]
+            PM[PluginManager]
+            WF[LangGraph Workflow]
+        end
+        
+        subgraph "🎯 AI Providers"
+            OAI[OpenAI Provider]
+            GEM[Gemini Provider] 
+            ANT[Anthropic Provider]
+        end
+        
+        subgraph "⚙️ Processing Modules"
+            VC[Video Captions]
+            MN[Multimedia Narratives]
+            MC[Marketing Content]
+        end
+        
+        subgraph "🔌 Plugin System"
+            EP[Example Plugin]
+            CP[Custom Plugins]
+            PL[Plugin Loader]
+        end
+        
+        subgraph "📋 Configuration"
+            ENV[Environment Variables]
+            SET[Settings Management]
+            CFG[Feature Flags]
+        end
+        
+        subgraph "🛠️ Utilities"
+            LOG[Logger]
+            VLD[Validators]
+            ERR[Error Handlers]
+        end
+    end
+    
+    MA --> PR
+    MA --> WF
+    PR --> VC
+    PR --> MN
+    PR --> MC
+    PM --> PR
+    PM --> PL
+    PL --> EP
+    PL --> CP
+    
+    VC --> OAI
+    VC --> GEM
+    MN --> OAI
+    MN --> GEM
+    MC --> OAI
+    MC --> GEM
+    
+    ENV --> SET
+    SET --> MA
+    CFG --> SET
+    
+    LOG --> MA
+    VLD --> PR
+    ERR --> WF
+    
+    style MA fill:#4CAF50,stroke:#333,stroke-width:3px,color:#fff
+    style PR fill:#2196F3,stroke:#333,stroke-width:2px,color:#fff
+    style PM fill:#FF9800,stroke:#333,stroke-width:2px,color:#fff
+    style GEM fill:#9C27B0,stroke:#333,stroke-width:2px,color:#fff
+```
+
+### Key Components:
+
+- **🔧 Core System**: Central orchestration and workflow management
+- **🎯 AI Providers**: Pluggable AI service integrations (OpenAI, Gemini, Anthropic)
+- **⚙️ Processing Modules**: Specialized content creation capabilities
+- **🔌 Plugin System**: Dynamic extension mechanism for custom functionality
+- **📋 Configuration**: Environment-based settings and feature management
+- **🛠️ Utilities**: Supporting infrastructure for logging, validation, and error handling
+
 ## 🚀 Quick Start
 
 ### Prerequisites
