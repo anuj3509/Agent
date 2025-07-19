@@ -32,6 +32,13 @@ A comprehensive AI agent that combines **LangChain** and **LangGraph** to create
 - **State management** throughout workflows
 - **Extensible architecture** for custom workflows
 
+### 🔧 Modular & Extensible Architecture
+- **Plugin system** for adding custom functionality
+- **Multi-provider AI support** (OpenAI, Gemini, Anthropic)
+- **Abstract base classes** for consistent processor interfaces
+- **Registry system** for dynamic processor management
+- **Configuration-driven** setup and customization
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -42,28 +49,45 @@ A comprehensive AI agent that combines **LangChain** and **LangGraph** to create
 
 ### Installation
 
+### Option 1: Automated Setup (Recommended)
+
 1. **Clone the repository:**
 ```bash
 git clone <repository-url>
 cd multimodal-ai-agent
 ```
 
-2. **Install dependencies:**
+2. **Run the setup script:**
 ```bash
+python setup.py
+```
+
+The setup script will automatically:
+- Check system dependencies
+- Install Python packages
+- Configure environment variables
+- Create necessary directories
+- Test the installation
+
+### Option 2: Manual Setup
+
+1. **Clone and install dependencies:**
+```bash
+git clone <repository-url>
+cd multimodal-ai-agent
 pip install -r requirements.txt
 ```
 
-3. **Set up environment variables:**
+2. **Set up environment variables:**
 ```bash
 # Copy the environment template
 cp env.template .env
 
 # Edit .env file with your API keys
-# Add your OpenAI API key and Gemini API key
-nano .env  # or use your preferred editor
+nano .env
 ```
 
-4. **Run the demo:**
+3. **Run the demo:**
 ```bash
 python main.py
 ```
@@ -175,12 +199,21 @@ The agent can be configured through environment variables or the `settings.py` f
 ```bash
 # API Configuration
 OPENAI_API_KEY=your_openai_api_key
+GEMINI_API_KEY=your_gemini_api_key
 HUGGINGFACE_API_TOKEN=your_hf_token  # Optional
+ANTHROPIC_API_KEY=your_anthropic_key  # Optional
 
 # Model Configuration  
 DEFAULT_VISION_MODEL=gpt-4-vision-preview
 DEFAULT_TEXT_MODEL=gpt-4-turbo-preview
 DEFAULT_EMBEDDING_MODEL=text-embedding-ada-002
+
+# Gemini Configuration
+GEMINI_MODEL=gemini-2.0-flash-exp
+GEMINI_VISION_MODEL=gemini-2.0-flash-exp
+
+# Default AI Provider
+DEFAULT_AI_PROVIDER=openai  # Options: openai, gemini, anthropic
 
 # Processing Settings
 MAX_VIDEO_DURATION=300       # 5 minutes
@@ -262,17 +295,53 @@ async def batch_process():
 
 ### Plugin Architecture
 
-The agent supports plugins for extending functionality:
+The agent supports a comprehensive plugin system for extending functionality:
 
 ```python
-# Custom processor plugin
-class CustomProcessor:
-    async def process(self, input_data):
-        # Custom processing logic
-        return processed_data
+from multimodal_agent.core.base import PluginInterface, BaseProcessor
 
-# Register plugin
-agent.register_processor("custom", CustomProcessor())
+class CustomPlugin(PluginInterface):
+    def get_name(self) -> str:
+        return "my_custom_plugin"
+    
+    def get_version(self) -> str:
+        return "1.0.0"
+    
+    def get_description(self) -> str:
+        return "Custom functionality for my use case"
+    
+    async def initialize(self, registry) -> bool:
+        # Register custom processors
+        processor = MyCustomProcessor(config)
+        return registry.register_processor(processor)
+    
+    async def cleanup(self) -> bool:
+        # Cleanup resources
+        return True
+
+# Load and use plugin
+from multimodal_agent.core.plugin_manager import global_plugin_manager
+
+await global_plugin_manager.load_and_initialize_plugin("my_custom_plugin")
+```
+
+### Multi-Provider AI Support
+
+Switch between different AI providers seamlessly:
+
+```python
+from multimodal_agent.providers import OpenAIProvider, GeminiProvider
+
+# Use OpenAI
+openai_provider = OpenAIProvider(api_key="your-key")
+text = await openai_provider.generate_text("Hello world")
+
+# Use Gemini
+gemini_provider = GeminiProvider(api_key="your-key") 
+text = await gemini_provider.generate_text("Hello world")
+
+# Analyze images with either provider
+image_analysis = await provider.analyze_image(image_data, "Describe this image")
 ```
 
 ## 📊 Performance & Limitations
